@@ -1,8 +1,16 @@
 package org.example;
 
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.result.InsertOneResult;
+import org.bson.Document;
+
 public class worker {
-    String url = "mongodb+srv://danieljava:danieljava@cluster0.jxjmtjc.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
-    
+
+
+
 
 
     private String name;
@@ -36,15 +44,39 @@ public class worker {
        return this.pay = pay * 2;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public String getBirthDate() {
+        return birthDate;
+    }
+
+    public String getEndDate() {
+        return endDate;
+    }
+
+    public double getPay() {
+        return pay;
+    }
+
+    String url = "mongodb+srv://danieljava:danieljava@cluster0.jxjmtjc.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+        MongoClient mongo = MongoClients.create(url);
+        MongoDatabase db = mongo.getDatabase("JavaFiles");
+        MongoCollection<Document> coll = db.getCollection("Worker");
+
+
 
     @Override
     public String toString() {
-        return "worker{" +
-                "name='" + name + '\'' +
-                ", birthDate='" + birthDate + '\'' +
-                ", endDate='" + endDate + '\'' +
-                ", Age ='" + getAge() + '\'' +
-                ", pay ='" + collectPay() + '\'' +
-                '}';
+        Document b = new Document(
+                "name " , name )
+                .append("birthDate",birthDate)
+                .append("endDate", endDate)
+                .append("Age", getAge())
+                .append("pay",collectPay());
+        InsertOneResult  r = coll.insertOne(b);
+
+        return r.toString();
     }
 }
