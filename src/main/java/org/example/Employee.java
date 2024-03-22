@@ -4,8 +4,7 @@ import com.mongodb.client.result.InsertOneResult;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
-import java.util.Random;
-import java.util.UUID;
+
 
 public class Employee extends worker{
     private int EmployeeID;
