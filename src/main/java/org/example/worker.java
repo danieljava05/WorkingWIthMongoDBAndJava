@@ -1,18 +1,14 @@
 package org.example;
 
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.*;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.result.InsertOneResult;
 import org.bson.Document;
 
+import java.util.Iterator;
+
 public class worker {
-
-
-
-
-
     private String name;
     private String birthDate;
     private String endDate;
@@ -41,7 +37,7 @@ public class worker {
         return convert + birth;
     }
     public double collectPay(){
-       return this.pay = pay * 2;
+       return this.pay = pay * 2 * convert(getAge());
     }
 
     public String getName() {
@@ -60,23 +56,36 @@ public class worker {
         return pay;
     }
 
-    String url = "mongodb+srv://danieljava:danieljava@cluster0.jxjmtjc.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
-        MongoClient mongo = MongoClients.create(url);
+
+        MongoClient mongo = MongoClients.create(System.getProperty("TEST"));
         MongoDatabase db = mongo.getDatabase("JavaFiles");
         MongoCollection<Document> coll = db.getCollection("Worker");
+       IndexOptions indexOptions = new IndexOptions().unique(true);
 
 
 
     @Override
     public String toString() {
         Document b = new Document(
-                "name " , name )
+                "Name",name )
                 .append("birthDate",birthDate)
                 .append("endDate", endDate)
                 .append("Age", getAge())
-                .append("pay",collectPay());
-        InsertOneResult  r = coll.insertOne(b);
+                .append("Pay",collectPay());
+        coll.createIndex(new Document("Name", 1), indexOptions);
 
-        return r.toString();
+
+        try{
+
+                        InsertOneResult r = coll.insertOne(b);
+                        return "Acknowledged";
+
+
+        }catch (Exception e){
+           return "duplicate";
+        }
+
+
+
     }
 }
